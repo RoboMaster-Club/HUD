@@ -14,7 +14,12 @@ to operators' camera feed, including but not limited to the following:
 3. Enemies' positions on screen and off screen
 4. Aim scope
 
-![Preview of HUD Settiings](resource/images/preview.png)
+Model of HUD
+![Model of HUD](./resource/images/preview.png "Model Explain")
+GUI Design
+![GUI Design](./resource/images/GUI-Design.png "GUI Design")
+Current GUI Prototype
+![Current GUI Prototype](resource/images/GUI-Prototype-2.png)
 
 ## Todos
 
@@ -31,6 +36,7 @@ to operators' camera feed, including but not limited to the following:
    2. Hardware
       1. [x] Measure camera specs and installation position specs 
       2. [ ] LCD dimension measurement
+      3. [ ] Reflective Film Testing
 2. Development
    1. Code
       1. [ ] Display
@@ -58,3 +64,11 @@ to operators' camera feed, including but not limited to the following:
    2. Hardware
       1. [ ] Shell support design
       2. [ ] Shell printing and testing
+
+## Info
+1. The player display is 1920 x 1080 (16:9)
+2. The LCD panel is 480 x 320 pixels (3:2)
+3. Use the ratio 1080:320 ~= 2.5 for GUI development
+   1. Boost Strip
+      1. 25 px *  150 px
+      2. (255, 0, 0, 50)
