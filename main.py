@@ -8,9 +8,16 @@ pygame.display.init()
 pygame.font.init()
 
 # Screen Constants
-RESOLUTION = WIDTH, HEIGHT = (480, 320)
+RESOLUTION = WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
 SCREEN_MARGIN = 30
-FRAME_RATE = 30
+FRAME_RATE = 40
+
+# Colors
+BLACK = (  0,   0,   0)
+WHITE = (255, 255, 255)
+BLUE =  (  0,   0, 255)
+GREEN = (  0, 255,   0)
+RED =   (255,   0,   0)
 
 # Boost Strip
 # Dimension of rectangle
@@ -20,7 +27,7 @@ BOOSTSTRIP_TOP = (HEIGHT + BOOSTSTRIP_HEIGHT) // 2
 BOOSTSTRIP_LEFT = WIDTH - SCREEN_MARGIN - BOOSTSTRIP_WIDTH
 
 # Strip configuration
-BOOSTSTRIP_COLOR = pygame.Color(255, 0, 0, 255)
+BOOSTSTRIP_COLOR = WHITE
 
 # Strip Frame
 BOOSTSTRIP_FRAME_WIDTH = 5
@@ -29,13 +36,6 @@ BOOSTSTRIP_FRAME = pygame.Rect(BOOSTSTRIP_LEFT - BOOSTSTRIP_FRAME_WIDTH,
 								BOOSTSTRIP_TOP + BOOSTSTRIP_FRAME_WIDTH,
 								BOOSTSTRIP_WIDTH + 2 * BOOSTSTRIP_FRAME_WIDTH, 
 								-(BOOSTSTRIP_HEIGHT + 2 * BOOSTSTRIP_FRAME_WIDTH))
-
-# Colors
-BLACK = (  0,   0,   0)
-WHITE = (255, 255, 255)
-BLUE =  (  0,   0, 255)
-GREEN = (  0, 255,   0)
-RED =   (255,   0,   0)
 
 # Font
 class TextFormatter():
@@ -86,22 +86,39 @@ class TextFormatter():
 
 		return textSurface, textSize
 
+class SerialWrapper(serial.Serial):
+	"""
+	Dummy Class for wrapping serial communication and parsing data
+	"""
+	def __init__(self):
+		pass
+	def read(self):
+		pass
+	def write(self):
+		pass
+
+class SerialDataObject():
+	pass
+
 textfont = pygame.font.Font('./resource/fonts/RobotSlab/RobotoSlab-Thin.ttf', 15)
 textFormatter = TextFormatter(textfont, WHITE)
 
 # Serial Configuration
+delimiter = ','
 ser = serial.Serial()
 ser.port = '/dev/cu.usbserial-00000000'
 ser.timeout = 0.01  # Reading Timeout is 10 ms
 ser.baudrate = 19200
+ser.parity = serial.PARITY_EVEN
 maxTrials = 5
 
 # Data communication
 MaxCapVolt = 24
 
 # Buckle Up!
-screen = pygame.display.set_mode(RESOLUTION)
+screen = pygame.display.set_mode(RESOLUTION, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 ser.open()
+ser.reset_input_buffer()
 
 running = True
 clock = pygame.time.Clock()
@@ -114,7 +131,8 @@ while running:
 	# Event handling
 	#--------------------------------
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT: exit()
+		if event.type == pygame.QUIT:
+			running = False
 		elif event.type == pygame.KEYDOWN:
 			if event.key == 27:
 				running = False
@@ -122,26 +140,33 @@ while running:
 	# TODO: Read from Serial and decode data communication
 	# Use comma for separation
 	data = None
+	capVolt = 0
 	tried = 0
-	while tried < 0:
+
+	# Ensure getting the realtime data
+	while tried < maxTrials:
 		tried += 1
-		# Try how many times
-		raw_data = ser.readline()
-		if not raw_data:
+		data = ser.readline().decode().strip()
+		print(data)
+		if not data:
+			continue 
+		# Validate data
+		data = data.split(',')
+		n = len(data)
+		# Acquire checksum
+		print(data)
+		try:
+			data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
+			data = dict(data)
+			capVolt = eval(data.pop('capVolt'))
+			print(data)
+			break
+		except BaseException:
 			continue
-		else:
-			try:
-				data = raw_data.decode().split(',')
-				n = len(data)
-				data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
-				data = dict(data)
-				break
-			except BaseException:
-				continue
 	else:
-		pass
-	data = {'capVolt':'1'}
-	capVolt = 1
+		capVolt = 0
+		data = {"Communcation": "Failed"}
+
 	
 
 	#--------------------------------
@@ -158,10 +183,9 @@ while running:
 	#--------------------------------
 
 	# Text info display
-	fps = clock.get_fps()
-	time = clock.get_rawtime()
-
-	sensorData = "FPS: %.2f\nTime: %.2f\nCapVolt: %.2f" % (fps, time / 1000, capVolt)
+	sensorData = "FPS: %.2f\n" % clock.get_fps()
+	for key in data.keys():
+		sensorData += "%s: %s\n" % (key, data[key])
 
 	# Text renderers
 	# Align to the strip
@@ -184,7 +208,7 @@ while running:
 
 	# Flip the whole screen
 	flipped = pygame.transform.flip(screen, False, True)
-	screen.blit(flipped, (0, 0))
+	# screen.blit(flipped, (0, 0))
 	pygame.display.update()
-
+ser.close()
 pygame.quit()

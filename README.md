@@ -57,13 +57,17 @@ Current GUI Prototype
             2. [ ] Triangles indication of enemies around
          4. [ ] Aim scope
       2. [ ] Data communication
-         1. [ ] [Super Capacitor Booster embedded system](https://github.com/RoboMaster-Club/Super-Capacitor-Booster)
+         1. [ ] Serial Communication Class
+         2. [ ] [Super Capacitor Booster embedded system](https://github.com/RoboMaster-Club/Super-Capacitor-Booster)
             1. [ ] Raw data reading
             2. [ ] Data processing
-         2. [ ] Custom Power distribution Unit
+            3. [ ] Better transmission speed
+               1. [ ] Serialize object? between python and c
+               2. [ ] Rewrite in C
+         3. [ ] Custom Power distribution Unit
             1. [ ] Raw data reading
             2. [ ] Data processing
-         3. [ ] TX 2 / STM32 Maincontroller
+         4. [ ] TX 2 / STM32 Maincontroller
             1. [ ] Raw data reading
             2. [ ] Data processing
    2. Hardware
