@@ -3,7 +3,9 @@ import pygame
 import serial
 
 # Initialization
-pygame.init()
+# TODO Partially 
+pygame.display.init()
+pygame.font.init()
 
 # Screen Constants
 RESOLUTION = WIDTH, HEIGHT = (480, 320)
@@ -18,7 +20,7 @@ BOOSTSTRIP_TOP = (HEIGHT + BOOSTSTRIP_HEIGHT) // 2
 BOOSTSTRIP_LEFT = WIDTH - SCREEN_MARGIN - BOOSTSTRIP_WIDTH
 
 # Strip configuration
-BOOSTSTRIP_COLOR = pygame.Color(150, 0, 0, 10)
+BOOSTSTRIP_COLOR = pygame.Color(255, 0, 0, 255)
 
 # Strip Frame
 BOOSTSTRIP_FRAME_WIDTH = 5
@@ -108,31 +110,37 @@ while running:
 	# Run loop at most FRAME_RATE per seconds
 	clock.tick(FRAME_RATE)
 
-	# #--------------------------------
-	# # Event handling
-	# #--------------------------------
-	# # TODO: Read from Serial and decode data communication
-	# # Use comma for separation
-	# data = None
-	# tried = 0
-	# while tried < 0:
-	# 	tried += 1
-	# 	# Try how many times
-	# 	raw_data = ser.readline()
-	# 	if not raw_data:
-	# 		continue
-	# 	else:
-	# 		try:
-	# 			data = raw_data.decode().split(',')
-	# 			n = len(data)
-	# 			data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
-	# 			data = dict(data)
-	# 			break
-	# 		except BaseException:
-	# 			continue
-	# else:
-	# 	pass
-	# data = {'capVolt':'1'}
+	#--------------------------------
+	# Event handling
+	#--------------------------------
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT: exit()
+		elif event.type == pygame.KEYDOWN:
+			if event.key == 27:
+				running = False
+
+	# TODO: Read from Serial and decode data communication
+	# Use comma for separation
+	data = None
+	tried = 0
+	while tried < 0:
+		tried += 1
+		# Try how many times
+		raw_data = ser.readline()
+		if not raw_data:
+			continue
+		else:
+			try:
+				data = raw_data.decode().split(',')
+				n = len(data)
+				data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
+				data = dict(data)
+				break
+			except BaseException:
+				continue
+	else:
+		pass
+	data = {'capVolt':'1'}
 	capVolt = 1
 	
 
