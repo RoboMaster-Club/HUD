@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import pygame
+import serial
 
 # Initialization
 pygame.init()
@@ -86,8 +87,19 @@ class TextFormatter():
 textfont = pygame.font.Font('./resource/fonts/RobotSlab/RobotoSlab-Thin.ttf', 15)
 textFormatter = TextFormatter(textfont, WHITE)
 
+# Serial Configuration
+ser = serial.Serial()
+ser.port = '/dev/cu.usbserial-00000000'
+ser.timeout = 0.01  # Reading Timeout is 10 ms
+ser.baudrate = 19200
+maxTrials = 5
+
+# Data communication
+MaxCapVolt = 24
+
 # Buckle Up!
 screen = pygame.display.set_mode(RESOLUTION)
+ser.open()
 
 running = True
 clock = pygame.time.Clock()
@@ -100,32 +112,39 @@ while running:
 	#--------------------------------
 	# Event handling
 	#--------------------------------
-	# TODO: Read from Serial and decode data comm
-	for event in pygame.event.get():
-		# only do something if the event is of type QUIT
-		if event.type == pygame.QUIT:
-			# change the value to False, to exit the main loop
-			running = False
-		elif event.type == pygame.KEYDOWN:
-			if event.unicode == "a" or event.unicode == "A":
-				# Add capacitor voltage
-				capVolt += 1
-			elif event.unicode == "d" or event.unicode == "D":
-				# Decrease capacitor voltage
-				capVolt -= 1
+	# TODO: Read from Serial and decode data communication
+	# Use comma for separation
+	# data = None
+	# tried = 0
+	# while tried < 0:
+	# 	tried += 1
+	# 	# Try how many times
+	# 	raw_data = ser.readline()
+	# 	if not raw_data:
+	# 		continue
+	# 	else:
+	# 		try:
+	# 			data = raw_data.decode().split(',')
+	# 			n = len(data)
+	# 			data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
+	# 			data = dict(data)
+	# 			break
+	# 		except BaseException:
+	# 			continue
+	# else:
+	# 	pass
+	# data = {'capVolt':'1'}
+	# capVolt = eval(data['capVolt'])
+	
 
 	#--------------------------------
 	# Super Capacitor Booster Display
 	#--------------------------------
 
-	# Correct value
-	capVolt = 20 if capVolt > 20 else capVolt
-	capVolt = 0 if capVolt < 0 else capVolt
-
 	# Create new strip
 	# -1 * height as the coordinate system is inverted
 	boostStrip = pygame.Rect(BOOSTSTRIP_LEFT, BOOSTSTRIP_TOP, 
-							BOOSTSTRIP_WIDTH, -capVolt * BOOSTSTRIP_HEIGHT // 20)
+							BOOSTSTRIP_WIDTH, -capVolt * BOOSTSTRIP_HEIGHT / MaxCapVolt)
 
 	#--------------------------------
 	# Text Display
