@@ -21,6 +21,11 @@ GUI Design
 Current GUI Prototype
 ![Current GUI Prototype](resource/images/GUI-Prototype-2.png)
 
+## Maintainers
+
+[William](https://purduerobomaster.slack.com/team/UCNH7S52P)
+![Headshot](resource/doc/Weili-An.png)
+
 ## Todos
 
 1. Preparation

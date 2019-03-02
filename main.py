@@ -156,6 +156,9 @@ while running:
 	pygame.draw.rect(screen, BOOSTSTRIP_FRAME_COLOR, BOOSTSTRIP_FRAME, BOOSTSTRIP_FRAME_WIDTH)  # Draw Frame
 	pygame.draw.rect(screen, BOOSTSTRIP_COLOR, boostStrip, 0)  # Draw actual boost strip
 
+	# Flip the whole screen
+	flipped = pygame.transform.flip(screen, False, True)
+	screen.blit(flipped, (0, 0))
 	pygame.display.update()
 
 pygame.quit()
