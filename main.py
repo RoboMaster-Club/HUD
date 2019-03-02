@@ -104,16 +104,15 @@ ser.open()
 running = True
 clock = pygame.time.Clock()
 capVolt = 0
-
 while running:
 	# Run loop at most FRAME_RATE per seconds
 	clock.tick(FRAME_RATE)
 
-	#--------------------------------
-	# Event handling
-	#--------------------------------
-	# TODO: Read from Serial and decode data communication
-	# Use comma for separation
+	# #--------------------------------
+	# # Event handling
+	# #--------------------------------
+	# # TODO: Read from Serial and decode data communication
+	# # Use comma for separation
 	# data = None
 	# tried = 0
 	# while tried < 0:
@@ -134,7 +133,7 @@ while running:
 	# else:
 	# 	pass
 	# data = {'capVolt':'1'}
-	# capVolt = eval(data['capVolt'])
+	capVolt = 1
 	
 
 	#--------------------------------
@@ -144,7 +143,7 @@ while running:
 	# Create new strip
 	# -1 * height as the coordinate system is inverted
 	boostStrip = pygame.Rect(BOOSTSTRIP_LEFT, BOOSTSTRIP_TOP, 
-							BOOSTSTRIP_WIDTH, -capVolt * BOOSTSTRIP_HEIGHT / MaxCapVolt)
+							BOOSTSTRIP_WIDTH, -capVolt * BOOSTSTRIP_HEIGHT // MaxCapVolt)
 
 	#--------------------------------
 	# Text Display
