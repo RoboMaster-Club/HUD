@@ -121,7 +121,7 @@ textFormatter = TextFormatter(textfont, WHITE)
 # Serial Configuration
 delimiter = ','
 ser = serial.Serial()
-ser.port = '/dev/cu.usbserial-00000000'
+ser.port = '/dev/ttyAMA0'
 ser.timeout = 0.01  # Reading Timeout is 10 ms
 ser.baudrate = 19200
 ser.parity = serial.PARITY_EVEN
@@ -132,8 +132,8 @@ MaxCapVolt = 24
 
 # Buckle Up!
 screen = pygame.display.set_mode(RESOLUTION, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-# ser.open()
-# ser.reset_input_buffer()
+ser.open()
+ser.reset_input_buffer()
 
 running = True
 clock = pygame.time.Clock()
@@ -159,28 +159,28 @@ while running:
 	tried = 0
 
 	# Ensure getting the realtime data
-	# while tried < maxTrials:
-	# 	tried += 1
-	# 	data = ser.readline().decode().strip()
-	# 	print(data)
-	# 	if not data:
-	# 		continue 
-	# 	# Validate data
-	# 	data = data.split(',')
-	# 	n = len(data)
-	# 	# Acquire checksum
-	# 	print(data)
-	# 	try:
-	# 		data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
-	# 		data = dict(data)
-	# 		capVolt = eval(data.pop('capVolt'))
-	# 		print(data)
-	# 		break
-	# 	except BaseException:
-	# 		continue
-	# else:
-	# 	capVolt = 0
-	# 	data = {"Communcation": "Failed"}
+	while tried < maxTrials:
+		tried += 1
+		data = ser.readline().decode().strip()
+		print(data)
+		if not data:
+			continue 
+		# Validate data
+		data = data.split(',')
+		n = len(data)
+		# Acquire checksum
+		print(data)
+		try:
+			data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
+			data = dict(data)
+			capVolt = eval(data.pop('capVolt'))
+			print(data)
+			break
+		except BaseException:
+			continue
+	else:
+		capVolt = 0
+		data = {"Communcation": "Failed"}
 
 	
 
