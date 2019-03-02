@@ -4,26 +4,11 @@ import serial
 import os
 
 # Initialization
-drivers = ['fbcon', 'directfb', 'svgalib']
-found = False
-for driver in drivers:
-	# Make sure that SDL_VIDEODRIVER is set
-	if not os.getenv('SDL_VIDEODRIVER'):
-		os.putenv('SDL_VIDEODRIVER', driver)
-	try:
-		pygame.display.init()
-	except pygame.error:
-		print('Driver: %s failed.' % driver)
-		continue
-	found = True
-	break
-
-if not found:
-	raise Exception('No suitable video driver found!')
+pygame.display.init()
 pygame.font.init()
 
 # Screen Constants
-RESOLUTION = WIDTH, HEIGHT = pygame.display.Info().current_w, pygame.display.Info().current_h
+RESOLUTION = WIDTH, HEIGHT = (480, 320)
 SCREEN_MARGIN = 30
 FRAME_RATE = 40
 
@@ -115,17 +100,19 @@ class SerialWrapper(serial.Serial):
 class SerialDataObject():
 	pass
 
-textfont = pygame.font.Font('./resource/fonts/RobotSlab/RobotoSlab-Thin.ttf', 15)
+textfont = pygame.font.Font('./resource/fonts/Roboto_Mono/RobotoMono-Thin.ttf', 15)
 textFormatter = TextFormatter(textfont, WHITE)
 
 # Serial Configuration
-delimiter = ','
 ser = serial.Serial()
-ser.port = '/dev/ttyAMA0'
+ser.port = '/dev/cu.usbserial-00000000'
+# ser.port = '/dev/ttyAMA0'
 ser.timeout = 0.01  # Reading Timeout is 10 ms
-ser.baudrate = 19200
+ser.baudrate = 115200
 ser.parity = serial.PARITY_EVEN
 maxTrials = 5
+delimiter = ','
+bufferSize = 100000
 
 # Data communication
 MaxCapVolt = 24
@@ -133,14 +120,23 @@ MaxCapVolt = 24
 # Buckle Up!
 screen = pygame.display.set_mode(RESOLUTION, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 ser.open()
-ser.reset_input_buffer()
 
 running = True
-clock = pygame.time.Clock()
 capVolt = 0
+clock = pygame.time.Clock()
+bufferCounter = 0
+
+data = {"Communcation": "Failed"}
 while running:
 	# Run loop at most FRAME_RATE per seconds
 	clock.tick(FRAME_RATE)
+	bufferCounter += 1
+	if bufferCounter > 50:
+		bufferCounter = 0
+		# Clear the buffer
+		ser.read(bufferSize)
+		continue
+
 
 	#--------------------------------
 	# Event handling
@@ -152,13 +148,10 @@ while running:
 			if event.key == 27:
 				running = False
 
-	# TODO: Read from Serial and decode data communication
 	# Use comma for separation
-	data = {"Communcation": "Failed"}
 	capVolt = 0
 	tried = 0
 
-	# Ensure getting the realtime data
 	while tried < maxTrials:
 		tried += 1
 		data = ser.readline().decode().strip()
@@ -174,13 +167,11 @@ while running:
 			data = [(data[i], data[i + 1]) for i in range(0, n, 2)] 
 			data = dict(data)
 			capVolt = eval(data.pop('capVolt'))
-			print(data)
 			break
 		except BaseException:
 			continue
 	else:
-		capVolt = 0
-		data = {"Communcation": "Failed"}
+		continue
 
 	
 
@@ -198,9 +189,9 @@ while running:
 	#--------------------------------
 
 	# Text info display
-	sensorData = "FPS: %.2f\n" % clock.get_fps()
+	sensorData = "FPS: %2.2f\n" % clock.get_fps()
 	for key in data.keys():
-		sensorData += "%s: %s\n" % (key, data[key])
+		sensorData += "%s: %5s\n" % (key, data[key])
 
 	# Text renderers
 	# Align to the strip

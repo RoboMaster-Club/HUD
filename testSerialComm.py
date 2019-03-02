@@ -5,8 +5,9 @@ import time
 ser = serial.Serial()
 ser.port = '/dev/cu.usbserial-00000000'
 ser.timeout = 0.1  # Reading Timeout is 10 ms
-ser.baudrate = 19200
-sendFrequency = 30
+ser.baudrate = 115200
+ser.parity = serial.PARITY_EVEN
+sendFrequency = 5
 maxTrials = 5
 counter = 0
 ser.open()
