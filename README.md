@@ -42,6 +42,7 @@ GUI Design
                 1. Possibly C struct or object stream [Ref](https://docs.python.org/3/library/struct.html)
         1. C Struct packing and unpacking
             1. Use C Struct to transmit data between components
+    1. [ ] Auto start script
 2. Hardware
     1. Mainly use triangles to improve structure strength
     1. Use 5mm organic glass to protect reflective film
@@ -99,3 +100,5 @@ GUI Design
    1. Boost Strip
       1. 25 px *  150 px
       2. (255, 0, 0, 50)
+4. `/dev/ttyS0` is the serial port name on raspberry pi zero w
+5. Need to disable serial console and enable uart prior to executing the program
