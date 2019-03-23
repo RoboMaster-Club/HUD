@@ -10,23 +10,6 @@ from util import *
 
 # Initialization
 system = platform.system()
-if system != 'Darwin':
-	drivers = ['fbcon', 'directfb', 'svgalib']
-	found = False
-	for driver in drivers:
-		# Make sure that SDL_VIDEODRIVER is set
-		if not os.getenv('SDL_VIDEODRIVER'):
-			os.putenv('SDL_VIDEODRIVER', driver)
-		try:
-			pygame.display.init()
-		except pygame.error:
-			print('Driver: %s failed.' % driver)
-			continue
-		found = True
-		break
-
-	if not found:
-		raise Exception('No suitable video driver found!')
 
 pygame.display.init()
 pygame.font.init()
