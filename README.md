@@ -27,7 +27,20 @@ GUI Design
 ## Maintainers
 
 [William](https://purduerobomaster.slack.com/team/UCNH7S52P)
-![Headshot](resource/doc/Weili-An.png)
+
+## Version 3 Update
+1. Screen
+    1. Color LCD without back light
+    2. Liquid Crystal without back light
+    3. Sparkfun Transparent LCD
+    4. Place vertically in front of camera to avoid light reflection and unnecessary blocking
+1. Display
+    1. Increase font size
+    1. Choose thicker font
+1. Version 2 Testing result
+    1. 3D printed structure block view
+    2. Reflection light interfere with view
+    3. Blurred text display
 
 ## Version 2 Update
 
