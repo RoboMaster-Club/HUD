@@ -20,7 +20,7 @@ textFormatter = TextFormatter(textfont, WHITE)
 
 # Serial Configuration
 ser = serial.Serial()
-ser.port = '/dev/cu.usbserial-00000000' if system == 'Darwin' else '/dev/ttyAMA0'
+ser.port = '/dev/cu.usbserial-00000000' if system == 'Darwin' else '/dev/ttyS0'
 ser.baudrate = 115200
 ser.parity = serial.PARITY_EVEN
 ser.open()
