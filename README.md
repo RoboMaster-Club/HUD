@@ -30,10 +30,15 @@ GUI Design
 
 ## Version 3 Update
 1. Screen
-    1. Color LCD without back light
-    2. Liquid Crystal without back light
+    1. ~~Color LCD without back light~~
+        1. Not transparent
+    2. ~~Liquid Crystal without back light~~
+        1. Unable to find
     3. Sparkfun Transparent LCD
-    4. Place vertically in front of camera to avoid light reflection and unnecessary blocking
+        4. Place vertically in front of camera to avoid light reflection and unnecessary blocking
+    4. Traditional reflection design
+    5. TFT screen + camera feed
+        1. Place screen in front of VTM camera and use another camera to capture the view behind the LCD
 1. Display
     1. Increase font size
     1. Choose thicker font
@@ -55,6 +60,9 @@ GUI Design
                 1. Possibly C struct or object stream [Ref](https://docs.python.org/3/library/struct.html)
         1. C Struct packing and unpacking
             1. Use C Struct to transmit data between components
+            1. Mind endian
+                1. Though arduino and pi should both be little endian
+                1. can use `sys.byteorder` to check for endian
     1. [ ] Auto start script
 2. Hardware
     1. Mainly use triangles to improve structure strength

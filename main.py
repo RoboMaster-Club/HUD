@@ -15,7 +15,7 @@ pygame.display.init()
 pygame.font.init()
 
 # Text
-textfont = pygame.font.Font('./resource/fonts/RobotSlab/RobotoSlab-Thin.ttf', 15)
+textfont = pygame.font.Font('./resource/fonts/RobotSlab/RobotoSlab-Light.ttf', 20)
 textFormatter = TextFormatter(textfont, WHITE)
 
 # Serial Configuration
@@ -54,13 +54,8 @@ while running:
 	# Serial data reading (blocking)
 	#--------------------------------
 	# TODO Use C struct
-	data = bufferQueue.get()
-	data = data.strip()
-	data = data.split(delimiter)
-	n = len(data)
-	data = [(data[i], data[i + 1]) for i in range(0, n, 2)]
-	data = dict(data)
-	capVolt = eval(data.pop('capVolt'))
+	sensorData = bufferQueue.get()
+	capVolt = sensorData[0]  # Assume the first element in the tuple in cap voltage
 
 
 	#--------------------------------
@@ -77,13 +72,14 @@ while running:
 	#--------------------------------
 
 	# Text info display
-	sensorData = "FPS: %2.2f\n" % clock.get_fps()
-	for key in data.keys():
-		sensorData += "%s: %5s\n" % (key, data[key])
+	sensorDataText = "FPS: %2.2f\n" % clock.get_fps()
+	n = len(dataName)
+	for i in range(1, n):
+		sensorDataText += "%s: %.2f\n" % (dataName[i], sensorData[i])
 
 	# Text renderers
 	# Align to the strip
-	textSurfaces = textFormatter.format(sensorData,
+	textSurfaces = textFormatter.format(sensorDataText,
 										(WIDTH - SCREEN_MARGIN - BOOSTSTRIP_WIDTH - 10,
 										(HEIGHT - BOOSTSTRIP_HEIGHT) // 2))
 
@@ -101,9 +97,10 @@ while running:
 	pygame.draw.rect(screen, BOOSTSTRIP_FRAME_COLOR, BOOSTSTRIP_FRAME, BOOSTSTRIP_FRAME_WIDTH)  # Draw Frame
 	pygame.draw.rect(screen, BOOSTSTRIP_COLOR, boostStrip, 0)  # Draw actual boost strip
 
-	# Flip the whole screen
-	flipped = pygame.transform.flip(screen, False, True)
-	# screen.blit(flipped, (0, 0))
+	if system != 'Darwin':
+		# Flip the whole screen
+		flipped = pygame.transform.flip(screen, False, True)
+		screen.blit(flipped, (0, 0))
 	pygame.display.update()
 serialThread.close()
 pygame.quit()
