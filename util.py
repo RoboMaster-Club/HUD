@@ -1,7 +1,7 @@
 from serial.threaded import LineReader
 from queue import LifoQueue, Full, Empty
 import pygame
-import platform
+import struct
 import sys
 
 
@@ -87,15 +87,23 @@ class TextFormatter:
 # Serial Communication
 BUFFER_SIZE = 100
 bufferQueue = LifoQueue(BUFFER_SIZE)
-delimiter = ','
+
+
+# TODO Redefine terminator char
+# TODO Upack incoming cstruct
+dataName = ['capVolt', 'time', 'sample']
 
 
 class ReadData(LineReader):
+    TERMINATOR = b'\n'
+    DATAFORMAT = 'fff'
+
     def connection_made(self, transport):
         super(ReadData, self).connection_made(transport)
         sys.stdout.write('port opened\n')
 
     def handle_line(self, data):
+        data = struct.unpack(self.DATAFORMAT, data)
         try:
             bufferQueue.put_nowait(data)
         except Full:
