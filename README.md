@@ -28,6 +28,23 @@ GUI Design
 
 [William](https://purduerobomaster.slack.com/team/UCNH7S52P)
 
+## Version 4 Update
+1. Potential Functionality
+    1. Debug port
+    1. Error message output (OLED)
+    1. Bluetooth / WIFI direct configuration / management
+        1. Web server
+        1. Enter different display mode (battle, debug, error, etc.)
+        1. Run main execute through wifi port
+    1. Competition data logging to SD card and could be downloaded from server
+1. OLED Screen location?
+    1. 1/3 of view or
+        1. Text display
+    1. Full view?
+        1. Bar display
+1. Code
+    1. Pack with auto setup script
+
 ## Version 3 Update
 1. Screen
     1. ~~Color LCD without back light~~
@@ -39,6 +56,7 @@ GUI Design
         5. OLED Feature
             1. Operating Voltage	1.65V-3.3V
             1. I2C Addresses	0x30 (Default), 0x31
+        6. Use only light bar to show data
     4. Traditional reflection design
     5. TFT screen + camera feed
         1. Place screen in front of VTM camera and use another camera to capture the view behind the LCD
