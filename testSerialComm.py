@@ -4,7 +4,8 @@ import time
 import struct
 
 dataFormat = 'fff'
-terminator = b'\n'
+starter = b'('
+terminator = b')'
 
 ser = serial.Serial()
 ser.port = '/dev/cu.usbserial-00000000'
@@ -13,7 +14,7 @@ ser.baudrate = 115200
 sendFrequency = 100
 maxTrials = 5
 counter = 0
-# ser.open()
+ser.open()
 
 # Generate dummy sine wave 
 while True:
@@ -27,5 +28,6 @@ while True:
     data = struct.pack(dataFormat, *(voltage, counter, sample))
     print(data)
     print(struct.unpack(dataFormat, data))
-    # ser.write(data)
-    # ser.write(terminator)
+    ser.write(starter)
+    ser.write(data)
+    ser.write(terminator)

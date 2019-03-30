@@ -34,8 +34,11 @@ GUI Design
         1. Not transparent
     2. ~~Liquid Crystal without back light~~
         1. Unable to find
-    3. Sparkfun Transparent LCD
+    3. [Sparkfun Transparent LCD](https://www.sparkfun.com/products/15173)
         4. Place vertically in front of camera to avoid light reflection and unnecessary blocking
+        5. OLED Feature
+            1. Operating Voltage	1.65V-3.3V
+            1. I2C Addresses	0x30 (Default), 0x31
     4. Traditional reflection design
     5. TFT screen + camera feed
         1. Place screen in front of VTM camera and use another camera to capture the view behind the LCD

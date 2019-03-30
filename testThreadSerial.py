@@ -1,7 +1,8 @@
 import serial
-from serial.threaded import LineReader, ReaderThread
+from serial.threaded import FramedPacket, ReaderThread
 from queue import LifoQueue, Full, Empty
 import os
+import struct
 import sys
 
 
@@ -9,13 +10,19 @@ BUFFER_SIZE = 100
 bufferQueue = LifoQueue(BUFFER_SIZE)
 
 
-class ReadData(LineReader):
+class ReadData(FramedPacket):
+    START = b'('
+    STOP = b')'
+    DATAFORMAT = 'fff'
+
+
     def connection_made(self, transport):
         super(ReadData, self).connection_made(transport)
         sys.stdout.write('port opened\n')
 
-    def handle_line(self, data):
+    def handle_packet(self, data):
         # sys.stdout.write('line received: {}\n'.format(repr(data)))
+        data = struct.unpack(self.DATAFORMAT, data)
         try:
             bufferQueue.put_nowait(data)
         except Full:
@@ -31,7 +38,7 @@ class ReadData(LineReader):
 ser = serial.Serial()
 ser.port = '/dev/cu.usbserial-00000000'
 ser.timeout = 1  # Reading Timeout is 10 ms
-ser.baudrate = 19200
+ser.baudrate = 115200
 ser.parity = serial.PARITY_EVEN
 ser.open()
 serialThread = ReaderThread(ser, ReadData)
@@ -40,6 +47,6 @@ transport, protocol = serialThread.connect()
 
 while True:
     try:
-        print(bufferQueue.get_nowait())
+        print(struct.unpack('hhh', bufferQueue.get_nowait()))
     except Empty:
         continue

@@ -1,6 +1,5 @@
-from serial.threaded import LineReader
+from serial.threaded import FramedPacket
 from queue import LifoQueue, Full, Empty
-import pygame
 import struct
 import sys
 
@@ -30,11 +29,6 @@ BOOSTSTRIP_COLOR = WHITE
 
 # Strip Frame
 BOOSTSTRIP_FRAME_WIDTH = 1
-BOOSTSTRIP_FRAME_COLOR = pygame.Color(255, 255, 255)
-BOOSTSTRIP_FRAME = pygame.Rect(BOOSTSTRIP_LEFT - BOOSTSTRIP_FRAME_WIDTH,
-                                BOOSTSTRIP_TOP + BOOSTSTRIP_FRAME_WIDTH,
-                                BOOSTSTRIP_WIDTH + 2 * BOOSTSTRIP_FRAME_WIDTH,
-                                -(BOOSTSTRIP_HEIGHT + 2 * BOOSTSTRIP_FRAME_WIDTH))
 
 
 class TextFormatter:
@@ -94,15 +88,16 @@ bufferQueue = LifoQueue(BUFFER_SIZE)
 dataName = ['capVolt', 'time', 'sample']
 
 
-class ReadData(LineReader):
-    TERMINATOR = b'\n'
+class ReadData(FramedPacket):
+    START = b'('
+    STOP = b')'
     DATAFORMAT = 'fff'
 
     def connection_made(self, transport):
         super(ReadData, self).connection_made(transport)
         sys.stdout.write('port opened\n')
 
-    def handle_line(self, data):
+    def handle_packet(self, data):
         data = struct.unpack(self.DATAFORMAT, data)
         try:
             bufferQueue.put_nowait(data)
